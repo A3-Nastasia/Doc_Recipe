@@ -63,7 +63,7 @@ hdr_cells[2].text = "Cooking steps"
 hdr_cells[2].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
 
 amount_ingredients = 5
-measure_ingredient = "kg"
+measure_ingredient = "kg" # Change to list
 for i in range(amount_ingredients):
     row = table.add_row()
     row.cells[0].text = f"{{{i}#_amount_of_this_ingredient}}" + "\n" + f"{measure_ingredient}"
