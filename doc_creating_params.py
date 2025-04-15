@@ -12,8 +12,6 @@ def save_docx(doc, doc_path, doc_name):
         print(f"Error: The file {doc_name} is currently in use. Please close it and try again.")
 
 
-
-
 def set_doc_format(doc):
     # Set font size as default for all doc
     style = doc.styles["Normal"]
@@ -29,6 +27,10 @@ def set_doc_format(doc):
     # Set none paragraph space after
     style.paragraph_format.space_after = 0
 
+# Set colunm width in Cm
+def set_table_col_width(col_id, width_in_cm):
+    for cell in table.columns[col_id].cells:
+        cell.width = Cm(width_in_cm)
 
 
 doc_name = "Recipe_template.docx"
@@ -49,16 +51,12 @@ run_heading.font.size = Pt(16)
 recipe_name_heading.paragraph_format.space_after = Pt(20)
 
 
-# table = doc.add_table(rows=2, cols=2)
-# table = doc.add_table(rows=2, cols=3)
 table = doc.add_table(rows=1, cols=3)
 table.style = 'Table Grid'
-# table.autofit = True
 table.autofit = False
 
 hdr_cells = table.rows[0].cells
 table.cell(0,0).merge(table.cell(0,1))
-# table.cell(0,0).paragraphs[0].alignment = enum.text.WD_ALIGN_PARAGRAPH.CENTER
 hdr_cells[0].text = "Ingredients"
 hdr_cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
 hdr_cells[2].text = "Cooking steps"
@@ -70,28 +68,18 @@ for i in range(amount_ingredients):
     row = table.add_row()
     row.cells[0].text = f"{{{i}#_amount_of_this_ingredient}}" + "\n" + f"{measure_ingredient}"
     row.cells[1].text = "{name_of_ingredient}"
-
-    # row.cells[0].paragraphs[0].add_break(WD_BREAK.TEXT_WRAPPING)
-
-
-    # # Format text
-    # paragraph = row.cells[0].paragraphs[0]
-    # paragraph_format = paragraph.paragraph_format
-    # paragraph_format.first_line_indent = Cm(-1)
-    # paragraph_format.left_indent = Cm(1)
+    row.cells[2].text = "{Cooking_steps_of_recipe _and_something_to_text_here}"
 
 # Merge (connect) all cols at the right side
 # The list of ingredients is at the left side
 # To write a proper version of cooking steps it should be one space
-# table.cell(1,1).merge(table.cell(amount_ingredients,1))
 table.cell(1,2).merge(table.cell(amount_ingredients,2))
 
 
-for cell in table.columns[0].cells:
-    cell.width = Cm(2)
 
-for cell in table.columns[1].cells:
-    cell.width = Cm(4.5)
+set_table_col_width(0, 2)
+set_table_col_width(1, 4.5)
+set_table_col_width(2, 13.5)
 
 
 
