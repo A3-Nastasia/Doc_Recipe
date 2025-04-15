@@ -5,12 +5,27 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 class DocRecipe:
     def __init__(self, doc_name):
+        """
+        DESCRIPTION: initialize class object
+
+        Args:
+            self (DocRecipe): Instance of the current class
+            doc_name (str): name of the .docx file
+        """
+
         # Create a doc object from python-docx
         self.doc = Document()
         self.doc_name = doc_name
 
     # Saving file and checking if it's opened
     def __save_docx(self, doc):
+        """
+        DESCRIPTION: Save file and check if it's opened
+
+        Args:
+            self (DocRecipe): Instance of the current class
+            doc (Document): Document object from python-docx
+        """
         try:
             doc_path = os.path.join(os.getcwd(), self.doc_name)
             doc.save(self.doc_name)
@@ -18,7 +33,16 @@ class DocRecipe:
         except PermissionError:
             print(f"Error: The file {self.doc_name} is currently in use. Please close it and try again.")
 
+    # TODO: add params to function like font size and etc.
     def __set_doc_format(self, doc):
+        """
+        DESCRIPTION: Set format for .docx text
+
+        Args:
+            self (DocRecipe): Instance of the current class
+            doc (Document): Document object from python-docx
+        """
+
         # Set font size as default for all doc
         style = doc.styles["Normal"]
         style.font.size = Pt(14)
@@ -33,19 +57,42 @@ class DocRecipe:
         # Set none paragraph space after
         style.paragraph_format.space_after = 0
 
-    # Set colunm width in Cm
     def __set_table_col_width(self, table, col_id, width_in_cm):
+        """
+        DESCRIPTION: Set column width in Cm
+
+        Args:
+            self (DocRecipe): Instance of the current class
+            table (Table): Table object inside .docx (Document)
+        """
+
         for cell in table.columns[col_id].cells:
             cell.width = Cm(width_in_cm)
 
     def __set_recipe_name_style(self, recipe_name, font_size, space_after):
+        """
+        DESCRIPTION: Set recipe name and style for it
+
+        Args:
+            self (DocRecipe): Instance of the current class
+            recipe_name (str): Recipe name
+            font_size (int): Font size in Pt
+            space_after (int): Space after paragraph in Pt
+        """
         recipe_name_heading = self.doc.add_paragraph()
         run_heading = recipe_name_heading.add_run(recipe_name)
         run_heading.font.size = Pt(font_size)
         recipe_name_heading.paragraph_format.space_after = Pt(space_after)
 
-
     def create_doc(self, recipe_name):
+        """
+        DESCRIPTION: Create a .docx file with recipe name and save it
+
+        Args:
+            self (DocRecipe): Instance of the current class
+            recipe_name (str): Recipe name
+        """
+
         self.__set_doc_format(self.doc)
         self.__set_recipe_name_style(recipe_name, 16, 20)
 
