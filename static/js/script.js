@@ -27,8 +27,13 @@ document.addEventListener("DOMContentLoaded", function(){
     let editableDiv = document.querySelector("[contenteditable]");
     // To functionality when user is writing something
     editableDiv.addEventListener("input", function() {
+        // If in div there is any image like screenshot then the placeholder will still be there
+        // To fix it it need to be checked if there not only text but also an img tag
+        const hasText = this.textContent.trim()!="";
+        const hasImg = this.querySelector("img")!=null;
+
         // If there is no text the attribute is removed to not display the placeholder
-        if (this.textContent.trim()!="")
+        if(hasText || hasImg)
             this.removeAttribute("data-text");
         // Otherwise the attribute is set again
         else
