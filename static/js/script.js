@@ -1,39 +1,39 @@
 // Get container to input ingredients or delete them
-const containerIngredientsGroup = document.getElementById("container-ingredients");
+const containerIngredientsGroup = document.getElementById("containerIngredients");
 
-async function send(){
+// async function send(){
 
-    const recipeName = document.getElementById("recipe-name").value;
-    const response = await fetch("output-data", {
-        method: "POST",
-        headers: {"Accept": "application/json", "Content-Type": "application/json"},
-        body: JSON.stringify({
-            recipeName: recipeName
-        })
-    });
+//     const recipeName = document.getElementById("recipeName").value;
+//     const response = await fetch("output-data", {
+//         method: "POST",
+//         headers: {"Accept": "application/json", "Content-Type": "application/json"},
+//         body: JSON.stringify({
+//             recipeName: recipeName
+//         })
+//     });
 
-    if (response.ok){
-        const data = await response.json();
-        document.getElementById("testText").textContent = data.message;
-    }
-    else
-    console.log(response);
-}
+//     if (response.ok){
+//         const data = await response.json();
+//         document.getElementById("testText").textContent = data.message;
+//     }
+//     else
+//     console.log(response);
+// }
 
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", function () {
     //#region Div placeholder display
     // The placeholder in <div> element is needed to be returned
     // Get element by attribute
     let editableDiv = document.querySelector("[contenteditable]");
     // To functionality when user is writing something
-    editableDiv.addEventListener("input", function() {
+    editableDiv.addEventListener("input", function () {
         // If in div there is any image like screenshot then the placeholder will still be there
         // To fix it it need to be checked if there not only text but also an img tag
-        const hasText = this.textContent.trim()!="";
-        const hasImg = this.querySelector("img")!=null;
+        const hasText = this.textContent.trim() != "";
+        const hasImg = this.querySelector("img") != null;
 
         // If there is no text the attribute is removed to not display the placeholder
-        if(hasText || hasImg)
+        if (hasText || hasImg)
             this.removeAttribute("data-text");
         // Otherwise the attribute is set again
         else
@@ -41,11 +41,11 @@ document.addEventListener("DOMContentLoaded", function(){
     });
     //#endregion
 
-    document.getElementById("textBold").addEventListener('click', function(){
+    document.getElementById("textBold").addEventListener('click', function () {
         document.execCommand('bold');
     })
 
-    document.getElementById("textItalic").addEventListener('click', function(){
+    document.getElementById("textItalic").addEventListener('click', function () {
         document.execCommand('italic');
     })
 });
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
 
 
-function appendIngredient(){
+function appendIngredient() {
     // Create elements for user
     const containerIngredient = document.createElement("div");
     const ingredientAmountField = document.createElement("input");
@@ -85,7 +85,7 @@ function appendIngredient(){
 // if any delete button was clicked 
 // this this pair will be deleted
 containerIngredientsGroup.addEventListener("click", e => {
-    if(e.target.classList.contains("button-delete-ingredient"))
+    if (e.target.classList.contains("button-delete-ingredient"))
         e.target.closest(".pair-wrapper").remove();
 });
 
@@ -103,24 +103,20 @@ const dropdownMenu = document.getElementById("dropdownMenu");
 const icon = document.querySelector(".icon-container");
 
 
-function getFullIncludesClassNames(elementsArray, str){
+function getFullIncludesClassNames(elementsArray, str) {
     // Using this kind of solution 
     // 'cause elements are DOM's elements and doesn't support .map, includes and etc.
     const elements = Array.from(elementsArray);
     return elements.map(i => Array.from(i.classList).find(j => j.includes(str))).filter(Boolean);
 }
 
-function clickJustifyTextAlign(element){
+function clickJustifyTextAlign(element) {
     // Using QuerySelectorAll(string) to find several elements
     const selectedJustifyMode = element;
-    console.log("selectedJustifyMode: ", selectedJustifyMode);
-    console.log("selectedJustifyMode: ", selectedJustifyMode.classList);
     const currentJustifyModeClassName = getFullIncludesClassNames(element, justifyClassNamePart);
-    
-    console.log(currentJustifyModeClassName);
     const justifyDirection = currentJustifyModeClassName[0].replace(justifyClassNamePart, '');
 
-    switch(justifyDirection){
+    switch (justifyDirection) {
         case "left":
             document.execCommand('justifyLeft');
             break;
@@ -139,9 +135,7 @@ function clickJustifyTextAlign(element){
 }
 
 document.querySelectorAll('.dropdown-item').forEach(btn => {
-    console.log(".dropdown-items");
     btn.addEventListener('click', e => {
-        console.log("btn");
         const selectedJustifyMode = e.currentTarget;
         clickJustifyTextAlign([selectedJustifyMode]);
     });
@@ -154,10 +148,10 @@ dropdownBtn.addEventListener('click', () => {
 
 dropdownMenu.addEventListener('click', (e) => {
     const item = e.target.closest(".dropdown-item");
-    if(!item) return;
+    if (!item) return;
 
     const svg = item.querySelector('svg');
-    if(svg) {
+    if (svg) {
         // Clear current icon
         icon.innerHTML = '';
         // Insert copy of svg
@@ -174,3 +168,53 @@ dropdownMenu.addEventListener('click', (e) => {
 });
 
 //#endregion
+
+
+// #region Send to server
+async function sendRecipe() {
+    const recipeName = document.getElementById("recipeName").value;
+    
+    // Get Ingredients. Firstly get the container and then get the input fields
+    const recipeIngredientsContainer = document.querySelectorAll(".pair-wrapper");
+
+    // To contain info from every container
+    const recipeIngredients = [];
+
+    const recipeIngredientsObject = Array.from(recipeIngredientsContainer).map(container => {
+
+        const inputs = container.querySelectorAll("input");
+
+        recipeIngredients.push({
+            amount: inputs[0]?.value || null,
+            measure: inputs[1]?.value || null,
+            ingredientName: inputs[2]?.value || null
+        });
+    });
+
+
+    console.log(recipeIngredients);
+
+    const response = await fetch("/submit-recipe", {
+        // method: "POST",
+        method: "POST",
+        headers: {
+            "Content-Type": 'application/json'
+        },
+        body: JSON.stringify({ recipeName, recipeIngredients })
+    });
+
+
+
+    // if(response.ok) {
+    //     const data = await response.json();
+    //     // alert(data.recipeName);
+    //     // alert(JSON.stringify(data));
+    //     alert(JSON.stringify(data.recipeName));
+    //     // alert(await response.json().message);
+    // }
+    // else
+    //     alert(response.status);
+
+    // const result = await response.json();
+}
+// #endregion

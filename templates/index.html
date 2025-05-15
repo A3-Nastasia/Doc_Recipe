@@ -16,12 +16,13 @@
     <div class="header">Doc Recipe</div>
 
 
+    <!-- <form action="submit" method="post" class="container-working-space"> -->
     <div class="container-working-space">
         <div class="container-recipe">
 
             <div class="container-recipe-item container-form form-group">
                 <div class="container-title-add">
-                    <input type="text" id="recipeName" placeholder="Название рецепта">
+                    <input type="text" id="recipeName" placeholder="Название рецепта" required>
                     <button id="appendIngredient" onclick="appendIngredient()">
                         <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -32,7 +33,7 @@
                         ингредиент</button>
 
                 </div>
-                <div id="container-ingredients"></div>
+                <div id="containerIngredients"></div>
             </div>
 
             <div class="container-recipe-item container-recipe-description">
@@ -120,9 +121,10 @@
 
             </div>
         </div>
-        <button id="getRecipe" onclick="send()">Получить рецепт</button>
+        <!-- <button id="getRecipe" onclick="send()">Получить рецепт</button> -->
+        <button id="getRecipe" onclick="sendRecipe()">Получить рецепт</button>
 
-    </div>
+    </form>
 
 </body>
 
