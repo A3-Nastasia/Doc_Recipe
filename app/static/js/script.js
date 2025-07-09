@@ -268,6 +268,7 @@ dropdownMenu.addEventListener('click', (e) => {
 
 //#endregion
 
+
 // Container to display errors to user
 const errors = document.getElementById('errorContainer');
 errors.style.display = 'none';
