@@ -102,7 +102,11 @@ class DocRecipe:
         recipe_name_heading.paragraph_format.space_after = Pt(space_after)
 
     def create_doc(self,
-                   recipe_name,
+
+                   recipe_name : str,
+                   list_ingredients : list,
+                   cooking_steps : str,
+
                    table_grid=False):
         """
         DESCRIPTION: Create a .docx file with recipe name and save it
@@ -131,27 +135,27 @@ class DocRecipe:
         hdr_cells[2].paragraphs[0].add_run("Cooking steps").font.bold = True
         hdr_cells[2].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
 
-        amount_ingredients = 5
-        measure_ingredient = "kg" # Change to list
-        for i in range(amount_ingredients):
+        for ingredient in list_ingredients:
             row = table.add_row()
-            row.cells[0].text = f"{{{i}#_amount_of_this_ingredient}}" + "\n" + f"{measure_ingredient}"
-            row.cells[1].text = "{name_of_ingredient}"
-            row.cells[2].text = "{Cooking_steps_of_recipe _and_something_to_text_here}"
+
+            values = list(ingredient.dict().values())
+
+            measure_cell = row.cells[0]
+            paragraph = measure_cell.paragraphs[0]
+            paragraph.text = f"{values[0]}\n{values[1]}"
+            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            row.cells[1].text = values[2]
+
+            row.cells[2].text = cooking_steps
+
 
         # Merge (connect) all cols at the right side
         # The list of ingredients is at the left side
         # To write a proper version of cooking steps it should be one space
-        table.cell(1,2).merge(table.cell(amount_ingredients,2))
+        table.cell(1,2).merge(table.cell(len(list_ingredients),2))
 
         self.__set_table_col_width(table, 0, 2)
         self.__set_table_col_width(table, 1, 4.5)
         self.__set_table_col_width(table, 2, 13.5)
 
         self.__save_docx(self.doc)
-
-
-test_doc = DocRecipe("Recipe_template.docx")
-recipe_name = "Recipe_name"
-test_doc.create_doc(recipe_name,
-                    table_grid=False)
